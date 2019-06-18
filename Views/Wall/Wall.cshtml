@@ -1,0 +1,42 @@
+﻿@using dojo_wall.Models
+@model WallViewModel
+
+<div class="container">
+  <div id="wall-header">    
+        <h2>Coding Dojo Wall</h2>
+        <h4 style="margin-left:20rem">Welcome @Model.currUser.FirstName</h4>
+        <h4><a href="logout" style="margin-left:4rem">Log Out</a></h4>
+  </div>
+  <hr><br>
+  <div class="wall-section">
+    <form asp-controller="Wall" asp-action="postMessage" method="post">
+        <label asp-for="@Model.newMsg.Content" class="">Post a message</label>
+        <textarea asp-for="@Model.newMsg.Content" class="form-control"></textarea>
+        <span asp-validation-for="@Model.newMsg.Content"></span><br>
+        <div style="width:99%;text-align:right">
+            <button type="submit" class="btn btn-primary">Post a message</button>
+        </div>
+    </form>
+    @foreach (var msg in @Model.messages)
+    {
+        <h3>@msg.user.FirstName @msg.user.LastName - @msg.CreatedAt.ToString("MMMM d, yyyy")</h3>
+        <p style="margin-left:2%">@msg.Content</p>
+        @foreach (var cmt in @msg.Comments)
+        {
+            <h4 style="margin-left:4%">@cmt.user.FirstName @cmt.user.LastName - @cmt.CreatedAt.ToString("MMMM d, yyyy")</h4>
+            <p style="margin-left:4%">@cmt.Content</p>
+        }
+        <form asp-controller="Wall" asp-action="postComment" method="post">
+            <div style="margin-left:4%">
+                <label asp-for="@Model.newCmt.Content" class="">Post a comment</label>
+                <textarea asp-for="@Model.newCmt.Content" class="form-control"></textarea>
+                <span asp-validation-for="@Model.newCmt.Content"></span><br>
+                <input type="hidden" asp-for="@Model.newCmt.MessageId" value="@msg.Id" />
+                <div style="width:99%;text-align:right">
+                    <button type="submit" class="btn btn-primary">Post a comment</button>
+                </div>
+            </div>
+        </form>
+    }
+  </div>
+</div>
